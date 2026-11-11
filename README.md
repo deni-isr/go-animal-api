@@ -29,8 +29,13 @@ docker compose up --build
 ## Reitit (Endpoints)
 
 Swagger UI: http://localhost:8080/swagger
+
 GET /api/v1/animals – Kaikki eläimet (tukee suodatusta, järjestystä ja sivutusta)
+
 GET /api/v1/animals/:id – Yksittäinen eläin
+
 POST /api/v1/animals – Lisää uusi eläin
+
 PUT /api/v1/animals/:id – Päivitä eläin
+
 DELETE /api/v1/animals/:id – Poista eläin
