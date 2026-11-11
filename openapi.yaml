@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: Go Animal REST API
+  description: REST API for managing animals with CRUD, Filtering, Sorting, Pagination, and Validation.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+paths:
+  /api/v1/animals:
+    get:
+      summary: Get all animals (with filtering, sorting, and pagination)
+      tags:
+        - Animals
+      parameters:
+        - in: query
+          name: species
+          schema:
+            type: string
+          description: Filter by exact species (e.g., Cat, Lion, Dog)
+        - in: query
+          name: habitat
+          schema:
+            type: string
+          description: Filter by habitat substring (e.g., Domestic, Savannah)
+        - in: query
+          name: endangered
+          schema:
+            type: boolean
+          description: Filter by endangered status (true or false)
+        - in: query
+          name: min_age
+          schema:
+            type: integer
+          description: Filter by minimum age
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [id, name, species, age, created_at]
+            default: id
+          description: Field to sort by
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: [ASC, DESC]
+            default: ASC
+          description: Sort order (ASC or DESC)
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of items per page
+      responses:
+        '200':
+          description: List of animals with pagination metadata
+    post:
+      summary: Create a new animal
+      tags:
+        - Animals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnimalInput'
+      responses:
+        '201':
+          description: Animal created successfully
+        '400':
+          description: Validation error
+  /api/v1/animals/{id}:
+    get:
+      summary: Get an animal by ID
+      tags:
+        - Animals
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Animal details
+        '404':
+          description: Animal not found
+    put:
+      summary: Update an existing animal
+      tags:
+        - Animals
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnimalInput'
+      responses:
+        '200':
+          description: Animal updated successfully
+        '400':
+          description: Validation error
+        '404':
+          description: Animal not found
+    delete:
+      summary: Delete an animal
+      tags:
+        - Animals
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Animal deleted successfully
+        '404':
+          description: Animal not found
+components:
+  schemas:
+    AnimalInput:
+      type: object
+      required:
+        - name
+        - species
+        - age
+        - habitat
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Balto"
+        species:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Wolf"
+        age:
+          type: integer
+          minimum: 0
+          maximum: 150
+          example: 6
+        habitat:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "Tundra"
+        endangered:
+          type: boolean
+          example: false
