@@ -41,18 +41,18 @@ func initDB() {
 	rootDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8mb4&parseTime=True&loc=Local", user, pass, host, port)
 	tempDB, err := gorm.Open(mysql.Open(rootDSN), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Не удалось подключиться к MariaDB (%s:%s): %v", host, port, err)
+		log.Fatalf("Cannot connect to MariaDB (%s:%s): %v", host, port, err)
 	}
 	tempDB.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", dbName))
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, pass, host, port, dbName)
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Ошибка подключения к базе %s: %v", dbName, err)
+		log.Fatalf("Cannot connect to database %s: %v", dbName, err)
 	}
 
 	if err := db.AutoMigrate(&Animal{}); err != nil {
-		log.Fatalf("Ошибка миграции: %v", err)
+		log.Fatalf("Cannot migrate database: %v", err)
 	}
 
 	var count int64
@@ -66,7 +66,7 @@ func initDB() {
 			{Name: "Kowalski", Species: "Penguin", Age: 3, Habitat: "Antarctica", Endangered: false},
 		}
 		db.Create(&seedAnimals)
-		log.Println("База данных заполнена тестовыми животными (5 записей)")
+		log.Println("Database filled with test animals (5 records)")
 	}
 }
 
@@ -229,7 +229,6 @@ func main() {
 		})
 	})
 
-	// Step 4: Отдача OpenAPI спецификации и Swagger UI
 	r.StaticFile("/openapi.yaml", "./openapi.yaml")
 	r.GET("/swagger", func(c *gin.Context) {
 		html := `<!DOCTYPE html>
@@ -264,7 +263,7 @@ func main() {
 	}
 
 	port := getEnv("PORT", "8080")
-	log.Printf("Сервер запущен на http://localhost:%s", port)
-	log.Printf("Swagger документация: http://localhost:%s/swagger", port)
+	log.Printf("Server started on http://localhost:%s", port)
+	log.Printf("Swagger documentation: http://localhost:%s/swagger", port)
 	r.Run(":" + port)
 }
